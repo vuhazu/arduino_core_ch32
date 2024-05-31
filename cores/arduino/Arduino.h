@@ -43,19 +43,11 @@ extern "C" {
 extern void setup(void) ;
 extern void loop(void) ;
 
-void yield(void);
+// void yield(void)
 
 #ifdef __cplusplus
 } // extern "C"
 #endif // __cplusplus
-
-#ifdef __cplusplus
-#  include "WCharacter.h"
-#  include "WString.h"
-#  include "WMath.h"
-//#  include <Tone.h>
-#  include <HardwareSerial.h>
-#endif
 
 // Include pins variant
 #include "pins_arduino.h"

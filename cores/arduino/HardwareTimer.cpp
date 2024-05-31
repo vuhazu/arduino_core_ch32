@@ -70,7 +70,12 @@ HardwareTimer::HardwareTimer(TIM_TypeDef *instance)
 #endif
 
 #ifdef TIM2_BASE
+#if defined(CH32X035)
+  NVIC_EnableIRQ(TIM2_UP_IRQn);
+  NVIC_EnableIRQ(TIM2_CC_IRQn);
+#else
   NVIC_EnableIRQ(TIM2_IRQn);
+#endif
 #endif
 
 #ifdef TIM3_BASE
@@ -1605,6 +1610,7 @@ extern "C" {
 #endif //TIM1_BASE
 
 #if defined(TIM2_BASE)
+#if defined(CH32X035)
   /**
     * @brief  TIM2 IRQHandler
     * @param  None
@@ -1620,6 +1626,24 @@ extern "C" {
       HardwareTimer::captureCompareCallback(&HardwareTimer_Handle[TIMER2_INDEX]->handle);
     }
   }
+#else
+  void TIM2_UP_IRQHandler(void) __attribute__((interrupt("WCH-Interrupt-fast"))); 
+  void TIM2_UP_IRQHandler(void)
+  {
+    if (HardwareTimer_Handle[TIMER2_INDEX]) {
+      // HAL_TIM_IRQHandler(&HardwareTimer_Handle[TIMER2_INDEX]->handle);
+       HardwareTimer::updateCallback(&HardwareTimer_Handle[TIMER2_INDEX]->handle);
+    }
+  }
+  void TIM2_CC_IRQHandler(void) __attribute__((interrupt("WCH-Interrupt-fast"))); 
+  void TIM2_CC_IRQHandler(void)
+  {
+    if (HardwareTimer_Handle[TIMER2_INDEX]) {
+      // HAL_TIM_IRQHandler(&HardwareTimer_Handle[TIMER8_INDEX]->handle);
+      HardwareTimer::captureCompareCallback(&HardwareTimer_Handle[TIMER2_INDEX]->handle);
+    }
+  }
+#endif
 #endif //TIM2_BASE
 
 #if defined(TIM3_BASE)
